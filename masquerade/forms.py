@@ -16,3 +16,6 @@ class MaskForm(forms.Form):
         except User.DoesNotExist:
             raise forms.ValidationError("Invalid username")
         return username
+
+class MaskUserForm(forms.Form):
+    pass

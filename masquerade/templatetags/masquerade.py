@@ -3,13 +3,14 @@ from django.core.urlresolvers import reverse
 
 register = template.Library()
 
-@register.tag
-def masquerade_link(parser, token):
-    return MasqueradeLinkNode()
+@register.simple_tag
+def masquerade_link(user=None):
+    return MasqueradeLinkNode(user=user)
 
 class MasqueradeLinkNode(template.Node):
-    def __init__(self):
+    def __init__(self, user=None):
         self.request = template.Variable('request')
+        self.user = user
     
     def render(self, context):
         request = self.request.resolve(context)
@@ -18,11 +19,12 @@ class MasqueradeLinkNode(template.Node):
 
         try:
             if request.user.is_masked:
-                link = link % (reverse('masquerade.views.unmask'),
-                  'Unmask!')
+                link = link % (reverse('masquerade.views.unmask'), 'Unmask!')
             else:
-                link = link % (reverse('masquerade.views.mask'),
-                  'Masquerade as user')
+                if self.user:
+                    link = link % (reverse('masquerade_user', args=[self.user.pk]), 'Masquerade as user')
+                else:
+                    link = link % (reverse('masquerade.views.mask'), 'Masquerade as user')
 
         except AttributeError:
             return ''

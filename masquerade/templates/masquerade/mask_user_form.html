@@ -1,0 +1,10 @@
+<html>
+<body>
+<form action="" method="POST">
+{% csrf_token %}
+<p>You are going to masquerade as {{ user.username }}:
+{{ form.as_p }}
+<p><input type="Submit" value="Confirm"></p>
+</form>
+</body>
+</html>
